@@ -16,11 +16,9 @@ public class Bloc {
 
     private String nomBloc;
     private Long capaciteBloc;
-    // Association ManyToOne avec Foyer
     @ManyToOne
     private Foyer foyer;
 
-    // Association OneToMany avec Chambre
     @OneToMany(mappedBy = "bloc", cascade = CascadeType.ALL)
     private Set<Chambre> chambres;
 }
