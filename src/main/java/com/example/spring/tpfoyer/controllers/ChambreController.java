@@ -14,19 +14,20 @@ public class ChambreController {
 
     ChambreService chambreService;
 
-    // GET : Liste des chambres
+    // GET http://localhost:8081/tpfoyer/chambre/retrieve-all-chambres
     @GetMapping("/retrieve-all-chambres")
     public List<Chambre> getChambres() {
-        return chambreService.retrieveAllChambres();
+        List<Chambre> listChambres = chambreService.retrieveAllChambres();
+        return listChambres;
     }
 
-    // GET : Une chambre par ID
+    // GET http://localhost:8081/tpfoyer/retrieve-chambre/2
     @GetMapping("/retrieve-chambre/{chambre-id}")
     public Chambre retrieveChambre(@PathVariable("chambre-id") Long chId) {
         return chambreService.retrieveChambre(chId);
     }
 
-    // POST : Ajouter une chambre
+    // POST : http://localhost:8081/tpfoyer/chambre//add-chambre
     @PostMapping("/add-chambre")
     public Chambre addChambre(@RequestBody Chambre c) {
         return chambreService.addChambre(c);
