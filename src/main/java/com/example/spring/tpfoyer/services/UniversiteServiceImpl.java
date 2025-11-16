@@ -1,5 +1,6 @@
 package com.example.spring.tpfoyer.services;
 
+import com.example.spring.tpfoyer.entity.Foyer;
 import com.example.spring.tpfoyer.entity.Universite;
 import com.example.spring.tpfoyer.repository.UniversiteRepository;
 import lombok.AllArgsConstructor;
@@ -30,4 +31,10 @@ public class UniversiteServiceImpl implements UniversiteService {
     public Universite modifyUniversite(Universite universite) {
         return universiteRepository.save(universite);
     }
+/*
+    @Override
+    public Universite affecteFoyerToUniversite(Long idFoyer, String nameUniversite) {
+        Foyer foyer = universiteRepository.findById(idFoyer).orElseThrow(()-> new  RuntimeException("Foyer not found"+idFoyer));
+
+    }*/
 }
