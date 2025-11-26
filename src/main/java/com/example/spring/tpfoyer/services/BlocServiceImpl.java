@@ -30,4 +30,10 @@ public class BlocServiceImpl implements BlocService {
     public Bloc modifyBloc(Bloc bloc) {
         return blocRepository.save(bloc);
     }
+
+    @Override
+    public Bloc affecterChambresABloc(List<Long> numChambre, long idBloc) {
+        Bloc bloc = blocRepository.findById(idBloc).orElseThrow();
+        return  null;
+    }
 }
