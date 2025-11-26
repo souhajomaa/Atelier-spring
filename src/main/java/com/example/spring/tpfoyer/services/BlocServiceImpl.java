@@ -1,15 +1,20 @@
 package com.example.spring.tpfoyer.services;
 
 import com.example.spring.tpfoyer.entity.Bloc;
+import com.example.spring.tpfoyer.entity.Chambre;
 import com.example.spring.tpfoyer.repository.BlocRepository;
+import com.example.spring.tpfoyer.repository.ChambreRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class BlocServiceImpl implements BlocService {
+
     BlocRepository blocRepository;
+    ChambreRepository chambreRepository;
 
     public List<Bloc> retrieveAllBlocs() {
         return blocRepository.findAll();
@@ -33,7 +38,22 @@ public class BlocServiceImpl implements BlocService {
 
     @Override
     public Bloc affecterChambresABloc(List<Long> numChambre, long idBloc) {
-        Bloc bloc = blocRepository.findById(idBloc).orElseThrow();
-        return  null;
+        Bloc bloc = blocRepository.findById(idBloc)
+                .orElseThrow(() -> new RuntimeException("Bloc not found with ID: " + idBloc));
+
+        for (Long numeroChambre : numChambre) {
+            Chambre chambre = chambreRepository.findByNumeroChambre(numeroChambre)
+                    .orElseThrow(() -> new RuntimeException("Chambre not found with numero: " + numeroChambre));
+
+            if (chambre.getBloc() != null && !chambre.getBloc().getIdBloc().equals(idBloc)) {
+                throw new RuntimeException("Chambre " + numeroChambre + " est déjà affectée au bloc: " + chambre.getBloc().getNomBloc());
+            }
+
+            chambre.setBloc(bloc);
+
+            chambreRepository.save(chambre);
+        }
+
+        return blocRepository.findById(idBloc).orElse(null);
     }
 }
