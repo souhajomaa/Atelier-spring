@@ -9,4 +9,6 @@ public interface FoyerService {
     Foyer addFoyer(Foyer f);
     void removeFoyer(Long foyerId);
     Foyer modifyFoyer(Foyer foyer);
+    Foyer ajouterFoyerEtAffecterAUniversite(Foyer foyer, Long idUniversite);
+
 }

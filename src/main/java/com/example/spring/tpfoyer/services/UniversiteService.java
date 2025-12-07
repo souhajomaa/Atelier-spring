@@ -9,6 +9,7 @@ public interface UniversiteService {
     Universite addUniversite(Universite u);
     void removeUniversite(Long universiteId);
     Universite modifyUniversite(Universite universite);
-    Universite affecteFoyerToUniversite(Long idFoyer, String nameUniversite);
-    public Universite desaffecterFoyerAUniversite (long idUniversite) ;
+
+    Universite affecteFoyerToUniversite(Long idFoyer, String nomUniversite);
+    Universite desaffecterFoyerAUniversite(Long idUniversite);
 }

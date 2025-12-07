@@ -42,20 +42,20 @@ public class UniversiteServiceImpl implements UniversiteService {
     }
 
     @Override
-    public Universite affecteFoyerToUniversite(Long idFoyer, String nameUniversite) {
+    public Universite affecteFoyerToUniversite(Long idFoyer, String nomUniversite) {
 
         Foyer foyer = foyerRepository.findById(idFoyer)
-                .orElseThrow(() -> new RuntimeException("Foyer not found : " + idFoyer));
+                .orElseThrow(() -> new RuntimeException("Foyer introuvable : " + idFoyer));
 
-        Universite universite = universiteRepository.findByNomUniversite(nameUniversite)
-                .orElseThrow(() -> new RuntimeException("Université not found : " + nameUniversite));
+        Universite universite = universiteRepository.findByNomUniversite(nomUniversite)
+                .orElseThrow(() -> new RuntimeException("Université introuvable : " + nomUniversite));
 
         if (foyer.getUniversite() != null) {
             throw new RuntimeException("Ce foyer est déjà affecté à une université.");
         }
 
         if (universite.getFoyer() != null) {
-            throw new RuntimeException("Cette université a déjà un foyer.");
+            throw new RuntimeException("Cette université possède déjà un foyer.");
         }
 
         universite.setFoyer(foyer);
@@ -66,10 +66,10 @@ public class UniversiteServiceImpl implements UniversiteService {
     }
 
     @Override
-    public Universite desaffecterFoyerAUniversite(long idUniversite) {
+    public Universite desaffecterFoyerAUniversite(Long idUniversite) {
 
-        Universite universite = universiteRepository.findByIdUniversite(idUniversite)
-                .orElseThrow(() -> new RuntimeException("Université not found : " + idUniversite));
+        Universite universite = universiteRepository.findById(idUniversite)
+                .orElseThrow(() -> new RuntimeException("Université introuvable : " + idUniversite));
 
         Foyer foyer = universite.getFoyer();
 
@@ -80,8 +80,8 @@ public class UniversiteServiceImpl implements UniversiteService {
         universite.setFoyer(null);
         foyer.setUniversite(null);
 
-        universiteRepository.save(universite);
         foyerRepository.save(foyer);
+        universiteRepository.save(universite);
 
         return universite;
     }

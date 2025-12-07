@@ -7,6 +7,7 @@ import com.example.spring.tpfoyer.repository.ChambreRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,20 +40,24 @@ public class BlocServiceImpl implements BlocService {
     @Override
     public Bloc affecterChambresABloc(List<Long> numChambre, long idBloc) {
         Bloc bloc = blocRepository.findById(idBloc)
-                .orElseThrow(() -> new RuntimeException("Bloc not found with ID: " + idBloc));
+                .orElseThrow(() -> new RuntimeException("Bloc not found: " + idBloc));
 
+        List<Chambre> chambres = new ArrayList<>();
         for (Long numeroChambre : numChambre) {
             Chambre chambre = chambreRepository.findByNumeroChambre(numeroChambre)
                     .orElseThrow(() -> new RuntimeException("Chambre not found with numero: " + numeroChambre));
 
-            if (chambre.getBloc() != null && !chambre.getBloc().getIdBloc().equals(idBloc)) {
-                throw new RuntimeException("Chambre " + numeroChambre + " est déjà affectée au bloc: " + chambre.getBloc().getNomBloc());
+            if (chambre.getBloc().getIdBloc() != idBloc) {
+                throw new RuntimeException("Chambre " + numeroChambre +
+                        " est déjà affectée au bloc: " + chambre.getBloc().getNomBloc());
             }
 
             chambre.setBloc(bloc);
 
-            chambreRepository.save(chambre);
+            chambres.add(chambre);
         }
+
+      chambreRepository.saveAll(chambres);
 
         return blocRepository.findById(idBloc).orElse(null);
     }
