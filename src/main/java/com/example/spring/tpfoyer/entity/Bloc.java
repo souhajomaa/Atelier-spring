@@ -2,7 +2,9 @@ package com.example.spring.tpfoyer.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,5 +22,7 @@ public class Bloc {
     private Foyer foyer;
 
     @OneToMany(mappedBy = "bloc", cascade = CascadeType.ALL)
-    private Set<Chambre> chambres;
+    private List<Chambre> chambres = new ArrayList<>();
+
+
 }
