@@ -1,16 +1,18 @@
 package com.example.spring.tpfoyer.services;
 
 import com.example.spring.tpfoyer.entity.Chambre;
+import com.example.spring.tpfoyer.entity.Reservation;
+import com.example.spring.tpfoyer.entity.TypeChambre;
+import com.example.spring.tpfoyer.entity.Universite;
+import com.example.spring.tpfoyer.repository.BlocRepository;
 import com.example.spring.tpfoyer.repository.ChambreRepository;
+import com.example.spring.tpfoyer.repository.UniversiteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -18,8 +20,9 @@ import java.util.Map;
 public class ChambreServiceImpl implements ChambreService {
 
     ChambreRepository chambreRepository;
+    UniversiteRepository universiteRepository;
+    BlocRepository blocRepository;
     List<Chambre> chambreList = new ArrayList<>();
-
 
 
     public List<Chambre> retrieveAllChambres() {
@@ -72,4 +75,63 @@ public class ChambreServiceImpl implements ChambreService {
             log.info("  Aucune chambre disponible pour le calcul des pourcentages");
         }
     }
-}
+
+        @Override
+        public List<Chambre> getChambresNonReserveParNomUniversiteEtTypeChambre (String nomUniversite, TypeChambre type)
+        {
+
+            // 1️⃣ Récupérer l'université
+            Universite universite = universiteRepository.findByNomUniversite(nomUniversite)
+                    .orElseThrow(() -> new RuntimeException("Université not found: " + nomUniversite));
+
+            // 2️⃣ Obtenir l'année actuelle
+            int anneeActuelle = Calendar.getInstance().get(Calendar.YEAR);
+
+            // 3️⃣ Créer une liste pour stocker les chambres non réservées
+            List<Chambre> chambresNonReservees = new ArrayList<>();
+
+            // 4️⃣ Récupérer toutes les chambres
+            List<Chambre> toutesChambres = chambreRepository.findAll();
+
+            // 5️⃣ Filtrer les chambres
+            for (Chambre chambre : toutesChambres) {
+
+                // Vérifier le type
+                if (chambre.getTypeC() != type) {
+                    continue;
+                }
+
+                // Vérifier l'université
+                if (chambre.getBloc() == null ||
+                        chambre.getBloc().getFoyer() == null ||
+                        chambre.getBloc().getFoyer().getUniversite() == null ||
+                        !chambre.getBloc().getFoyer().getUniversite().getIdUniversite()
+                                .equals(universite.getIdUniversite())) {
+                    continue;
+                }
+
+                // Vérifier si la chambre n'a pas de réservation valide cette année
+                boolean estReservee = false;
+
+                if (chambre.getReservations() != null) {
+                    for (Reservation reservation : chambre.getReservations()) {
+                        if (reservation.isEstValide()) {
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(reservation.getAnneeUniversitaire());
+
+                            if (cal.get(Calendar.YEAR) == anneeActuelle) {
+                                estReservee = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (!estReservee) {
+                    chambresNonReservees.add(chambre);
+                }
+            }
+
+            return chambresNonReservees;
+        }
+    }

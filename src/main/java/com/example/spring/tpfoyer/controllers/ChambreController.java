@@ -1,6 +1,7 @@
 package com.example.spring.tpfoyer.controllers;
 
 import com.example.spring.tpfoyer.entity.Chambre;
+import com.example.spring.tpfoyer.entity.TypeChambre;
 import com.example.spring.tpfoyer.services.ChambreService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,15 +21,17 @@ public class ChambreController {
     // GET http://localhost:8081/tpfoyer/chambre/retrieve-all-chambres
     @GetMapping("/retrieve-all-chambres")
     public List<Chambre> getChambres() {
-       return chambreService.retrieveAllChambres();
+        return chambreService.retrieveAllChambres();
 
     }
+
     @Operation(description = "Récupérer une chambre par son ID")
     // GET http://localhost:8081/tpfoyer/retrieve-chambre/2
     @GetMapping("/retrieve-chambre/{chambre-id}")
     public Chambre retrieveChambre(@PathVariable("chambre-id") Long chId) {
         return chambreService.retrieveChambre(chId);
     }
+
     @Operation(description = "Ajouter une nouvelle chambre")
     // POST : http://localhost:8081/tpfoyer/chambre/add-chambre
     @PostMapping("/add-chambre")
@@ -48,5 +51,15 @@ public class ChambreController {
     @PutMapping("/modify-chambre")
     public Chambre modifyChambre(@RequestBody Chambre c) {
         return chambreService.modifyChambre(c);
+    }
+
+    //service4 getChambresNonReserveParNomUniversiteEtTypeChambre
+    @Operation(description = "Récupérer les chambres non réservées par université et type")
+    @GetMapping("/chambres-non-reservees/{nom-universite}/{type}")
+    public List<Chambre> getChambresNonReservees(
+            @PathVariable("nom-universite") String nomUniversite,
+            @PathVariable("type") TypeChambre type) {
+        return chambreService.getChambresNonReserveParNomUniversiteEtTypeChambre(nomUniversite, type);
+
     }
 }

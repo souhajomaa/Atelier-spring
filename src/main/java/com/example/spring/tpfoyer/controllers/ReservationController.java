@@ -6,6 +6,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Tag(name = "Gestion Reservation")
@@ -43,5 +46,32 @@ public class ReservationController {
     @PutMapping("/modify-reservation")
     public Reservation modifyReservation(@RequestBody Reservation r) {
         return reservationService.modifyReservation(r);
+    }
+
+    @Operation(description = "Ajouter une réservation pour un étudiant dans un bloc")
+    @PostMapping("/ajouter-reservation/{bloc-id}/{cin}")
+    public Reservation ajouterReservation(
+
+            @PathVariable("bloc-id") Long idBloc,
+            @PathVariable("cin") Long cin) {
+        return reservationService.ajouterReservation(idBloc, cin);
+    }
+    @Operation(description = "Annuler une réservation d'un étudiant par son CIN")
+    @PutMapping("/annuler-reservation/{cin}")
+    public Reservation annulerReservation(@PathVariable("cin") Long cin) {
+        return reservationService.annulerReservation(cin);
+    }
+    //sercice 3 getReservationParAnneeUniversitaireEtNomUniversite
+    @Operation(description = "Récupérer les réservations par année universitaire et nom d'université")
+    @GetMapping("/reservations-par-annee-universite")
+    public List<Reservation> getReservationParAnneeUniversitaireEtNomUniversite(
+            @RequestParam String annee,
+            @RequestParam String nomUniversite) throws Exception {
+
+        // Convertir l'année String en Date
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        Date date = sdf.parse(annee);
+
+        return reservationService.getReservationParAnneeUniversitaireEtNomUniversite(date, nomUniversite);
     }
 }
