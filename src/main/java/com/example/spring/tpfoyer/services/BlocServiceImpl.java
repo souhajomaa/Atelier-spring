@@ -4,6 +4,7 @@ import com.example.spring.tpfoyer.entity.Bloc;
 import com.example.spring.tpfoyer.entity.Chambre;
 import com.example.spring.tpfoyer.repository.BlocRepository;
 import com.example.spring.tpfoyer.repository.ChambreRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -65,7 +66,8 @@ public class BlocServiceImpl implements BlocService {
         return blocRepository.findById(idBloc).orElse(null);
     }
 
-    @Scheduled(cron = "0/15 * * * * *")
+    @Scheduled(cron = "0 */15 * * * *")
+    @Transactional
     public void listeChambresParBloc() {
         List<Bloc> blocs = blocRepository.findAll();
         if (!blocs.isEmpty()) {
